@@ -227,9 +227,6 @@ mvn verify
 3. Create pull request
 4. Review and merge
 
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Contributing
 
