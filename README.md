@@ -66,6 +66,15 @@ GET    /api/files/{fileId}       - Download file
 DELETE /api/files/{fileId}       - Delete file (ADMIN only)
 ```
 
+Collecting workspace information
+
+I'll help expand the 
+
+README.md
+
+ with more detailed information about the Spring Boot application. Here's the additional content:
+
+```markdown
 ### Audit Logs
 ```
 GET    /api/audit-logs           - List all audit logs
@@ -78,8 +87,10 @@ GET    /api/audit-logs/paperwork/{ppwId}  - Get paperwork audit logs
 
 ### Prerequisites
 - Java 21
-- Maven
+- Maven 3.9+
 - Docker & Docker Compose
+- MariaDB 10.6+
+- Redis 7.0+
 
 ### Running with Docker
 ```bash
@@ -120,15 +131,42 @@ spring.mail.username=your-email@soc.edu.my
 spring.mail.password=your-app-password
 ```
 
-## Documentation
+## Project Structure
 
-API documentation is available through Swagger UI:
 ```
-http://localhost:8080/swagger-ui.html
+src/
+├── main/
+│   ├── java/my/socpms/api/
+│   │   ├── config/         # Configuration classes
+│   │   ├── controller/     # REST controllers
+│   │   ├── dto/           # Data Transfer Objects
+│   │   ├── model/         # Entity classes
+│   │   ├── repository/    # JPA repositories
+│   │   ├── security/      # Security configurations
+│   │   └── service/       # Business logic
+│   └── resources/
+│       ├── static/        # Static resources
+│       ├── templates/     # Thymeleaf templates
+│       └── application.properties
+└── test/                  # Test classes
 ```
 
-## Security
+## Key Features
 
+### Role-Based Access Control
+- ADMIN: Full system access
+- DEAN: Paperwork approval and department oversight
+- HOD: Department-level paperwork review
+- STAFF: Basic paperwork submission
+
+### Workflow States
+1. SUBMITTED - Initial state
+2. HOD_REVIEW - Under HOD review
+3. DEAN_REVIEW - Under Dean review
+4. APPROVED - Final approved state
+5. REJECTED - Rejected state
+
+### Security Features
 - JWT-based authentication
 - Password encryption with BCrypt
 - Role-based access control
@@ -137,7 +175,7 @@ http://localhost:8080/swagger-ui.html
 - XSS protection
 - CSRF protection
 
-## Monitoring
+### Monitoring
 
 Health and metrics endpoints:
 ```
@@ -146,17 +184,62 @@ Health and metrics endpoints:
 /actuator/prometheus
 ```
 
+### Documentation
+
+API documentation is available through Swagger UI:
+```
+http://localhost:8080/swagger-ui.html
+```
+
+### Redis Caching
+- User data caching
+- Paperwork list caching
+- Cache invalidation on updates
+
+### Audit Logging
+- User actions tracking
+- Paperwork state changes
+- File operations
+- Login attempts
+
 ## Testing
 
 Run tests with:
 ```bash
+# Run unit tests
 mvn test
+
+# Run integration tests
+mvn verify
 ```
+
+## Development Guidelines
+
+### Code Style
+- Follow Google Java Style Guide
+- Use meaningful variable and method names
+- Document public APIs
+- Write unit tests for new features
+
+### Git Workflow
+1. Create feature branch from `develop`
+2. Make changes and commit
+3. Create pull request
+4. Review and merge
 
 ## License
 
-This project is licensed under the MIT License.
-```
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-This README provides a comprehensive overview of the project's features, endpoints, setup instructions, and technical details that developers would need to understand and work with the system.
-This README provides a comprehensive overview of the project's features, endpoints, setup instructions, and technical details that developers would need to understand and work with the system.
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## Support
+
+For support and questions, please open an issue in the GitHub repository.
+```
