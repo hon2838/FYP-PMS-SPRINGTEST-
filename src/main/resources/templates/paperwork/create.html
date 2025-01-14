@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>New Paperwork - SOC PMS</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container py-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-plus text-primary me-2"></i>
+                        Create New Paperwork
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form th:action="@{/paperwork/new}" method="post" 
+                          enctype="multipart/form-data" class="needs-validation" novalidate>
+                        
+                        <!-- Reference Number -->
+                        <div class="row mb-4">
+                            <label class="col-sm-3 col-form-label fw-medium">
+                                Reference Number: <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <input type="text" 
+                                       class="form-control form-control-lg shadow-sm" 
+                                       name="refNumber"
+                                       placeholder="Enter reference number"
+                                       required>
+                                <div class="invalid-feedback">
+                                    Please enter a reference number
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Project Name -->
+                        <div class="row mb-4">
+                            <label class="col-sm-3 col-form-label fw-medium">
+                                Project Name: <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <input type="text" 
+                                       class="form-control form-control-lg shadow-sm" 
+                                       name="projectName"
+                                       placeholder="Enter project name"
+                                       required>
+                                <div class="invalid-feedback">
+                                    Please enter a project name
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Paperwork Type -->
+                        <div class="row mb-4">
+                            <label class="col-sm-3 col-form-label fw-medium">
+                                Paperwork Type: <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <select class="form-select form-select-lg shadow-sm" 
+                                        name="ppwType" required>
+                                    <option value="">Select paperwork type</option>
+                                    <option value="PROPOSAL">Proposal</option>
+                                    <option value="REPORT">Report</option>
+                                    <option value="DOCUMENTATION">Documentation</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please select a paperwork type
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Session -->
+                        <div class="row mb-4">
+                            <label class="col-sm-3 col-form-label fw-medium">
+                                Session: <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <input type="text" 
+                                       class="form-control form-control-lg shadow-sm" 
+                                       name="session"
+                                       placeholder="Enter session (e.g., 2024/2025)"
+                                       required>
+                                <div class="invalid-feedback">
+                                    Please enter the session
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Document Upload -->
+                        <div class="row mb-4">
+                            <label class="col-sm-3 col-form-label fw-medium">
+                                Document: <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <input type="file" 
+                                       class="form-control form-control-lg shadow-sm" 
+                                       name="document"
+                                       accept=".pdf,.doc,.docx"
+                                       required>
+                                <div class="invalid-feedback">
+                                    Please upload a document
+                                </div>
+                                <small class="text-muted">
+                                    Accepted formats: PDF, DOC, DOCX (Max size: 10MB)
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Background -->
+                        <div class="row mb-4">
+                            <label class="col-sm-3 col-form-label fw-medium">
+                                Background: <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control form-control-lg shadow-sm" 
+                                          name="background"
+                                          rows="4"
+                                          placeholder="Enter project background"
+                                          required></textarea>
+                                <div class="invalid-feedback">
+                                    Please provide the background information
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Aim -->
+                        <div class="row mb-4">
+                            <label class="col-sm-3 col-form-label fw-medium">
+                                Aim: <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control form-control-lg shadow-sm" 
+                                          name="aim"
+                                          rows="4"
+                                          placeholder="Enter project aims"
+                                          required></textarea>
+                                <div class="invalid-feedback">
+                                    Please provide the project aims
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dates -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium">
+                                    Start Date: <span class="text-danger">*</span>
+                                </label>
+                                <input type="date" 
+                                       class="form-control form-control-lg shadow-sm" 
+                                       name="startDate"
+                                       required>
+                                <div class="invalid-feedback">
+                                    Please select a start date
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium">
+                                    End Date: <span class="text-danger">*</span>
+                                </label>
+                                <input type="date" 
+                                       class="form-control form-control-lg shadow-sm" 
+                                       name="endDate"
+                                       required>
+                                <div class="invalid-feedback">
+                                    Please select an end date
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="d-flex justify-content-end gap-2 mt-5">
+                            <a th:href="@{/dashboard}" class="btn btn-light btn-lg px-4">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg px-4">
+                                <i class="fas fa-save me-2"></i>Submit Paperwork
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page Scripts -->
+    <th:block layout:fragment="scripts">
+        <script>
+            // Form validation
+            (function() {
+                'use strict';
+                var forms = document.querySelectorAll('.needs-validation');
+                Array.prototype.slice.call(forms).forEach(function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+
+                        // Additional file validation
+                        const fileInput = form.querySelector('input[type="file"]');
+                        if (fileInput && fileInput.files.length > 0) {
+                            const file = fileInput.files[0];
+                            const maxSize = 10 * 1024 * 1024; // 10MB
+                            const allowedTypes = [
+                                'application/pdf',
+                                'application/msword',
+                                'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                            ];
+
+                            if (file.size > maxSize) {
+                                event.preventDefault();
+                                event.stopPropagation();
+                                showNotification({
+                                    type: 'error',
+                                    title: 'File Too Large',
+                                    message: 'Maximum file size is 10MB',
+                                    details: 'Please choose a smaller file'
+                                });
+                                return;
+                            }
+
+                            if (!allowedTypes.includes(file.type)) {
+                                event.preventDefault();
+                                event.stopPropagation();
+                                showNotification({
+                                    type: 'error',
+                                    title: 'Invalid File Type',
+                                    message: 'Only PDF and Word documents are allowed',
+                                    details: 'Please choose a valid file type'
+                                });
+                                return;
+                            }
+                        }
+
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+
+                // Date validation
+                const startDate = document.querySelector('input[name="startDate"]');
+                const endDate = document.querySelector('input[name="endDate"]');
+                
+                if (startDate && endDate) {
+                    endDate.addEventListener('change', function() {
+                        if (startDate.value && this.value) {
+                            if (new Date(this.value) < new Date(startDate.value)) {
+                                this.setCustomValidity('End date must be after start date');
+                            } else {
+                                this.setCustomValidity('');
+                            }
+                        }
+                    });
+                }
+            })();
+        </script>
+    </th:block>
+</body>
+</html>

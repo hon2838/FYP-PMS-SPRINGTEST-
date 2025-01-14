@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOC Paperwork Management System</title>
+    
+    <!-- External CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Local CSS -->
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    
+    <!-- Prevent theme flash during loading -->
+    <style>
+        body {
+            visibility: hidden;
+            transition: background-color 0.2s ease;
+        }
+        body.theme-loaded {
+            visibility: visible;
+        }
+        :root[data-theme="dark"] {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --text-primary: #ffffff;
+            --text-secondary: #ced4da;
+            --border-color: #404040;
+            --card-bg: #2d2d2d;
+            --navbar-bg: #2d2d2d;
+            --table-bg: #2d2d2d;
+            --primary: #0d6efd;
+            --primary-hover: #0b5ed7;
+            --shadow-color: rgba(0, 0, 0, 0.2);
+            --hover-bg: rgba(255, 255, 255, 0.05);
+            --table-hover-bg: rgba(255, 255, 255, 0.03);
+            --table-striped-bg: rgba(255, 255, 255, 0.02);
+            --input-bg: #2d2d2d;
+            --input-border: #404040;
+            --modal-bg: #2d2d2d;
+            --dropdown-bg: #2d2d2d;
+            --tooltip-bg: #1a1a1a;
+        }
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --border-color: #dee2e6;
+            --card-bg: #ffffff;
+            --navbar-bg: #ffffff;
+            --table-bg: #ffffff;
+            --primary: #0d6efd;
+            --primary-hover: #0b5ed7;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --hover-bg: rgba(0, 0, 0, 0.02);
+            --table-hover-bg: rgba(0, 0, 0, 0.02);
+            --table-striped-bg: rgba(0, 0, 0, 0.01);
+            --input-bg: #ffffff;
+            --input-border: #dee2e6;
+            --modal-bg: #ffffff;
+            --dropdown-bg: #ffffff;
+            --tooltip-bg: #000000;
+        }
+        body, .card, .navbar, .modal-content, .form-control, .btn {
+            transition: background-color 0.3s ease, 
+                       border-color 0.3s ease, 
+                       color 0.3s ease;
+        }
+    </style>
+    
+    <!-- Add CSS for background image -->
+    <style>
+    .bg-image {
+        background-size: cover;
+        background-position: center;
+        z-index: -1;
+        opacity: 0.8;
+    }
+
+    [data-theme="dark"] .bg-image {
+        opacity: 0.6;
+        filter: brightness(0.7);
+    }
+
+    @media (max-width: 768px) {
+        .bg-image {
+            filter: blur(8px);
+            transform: scale(1.1);
+        }
+    }
+    </style>
+
+    <!-- Theme initialization -->
+    <script th:inline="javascript">
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'dark' || 
+                (savedTheme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+            document.addEventListener('DOMContentLoaded', function() {
+                document.body.classList.add('theme-loaded');
+            });
+        })();
+    </script>
+</head>
+
+<body class="bg-light">
+    <!-- Background Image -->
+    <div class="bg-image position-fixed w-100 h-100" 
+         th:if="${backgroundImage}"
+         th:style="'background-image: url(/uploads/images/' + ${backgroundImage} + ');'">
+    </div>
+
+    <!-- Add to base.html -->
+    <div id="loadingIndicator" class="position-fixed top-0 start-0 w-100 h-100 d-none">
+        <div class="d-flex justify-content-center align-items-center h-100">
+            <div class="spinner-border text-primary"></div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" th:href="@{/}">
+                <i class="fas fa-file-alt text-primary me-2"></i>
+                <span class="fw-bold">SOC Paperwork System</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+                    data-bs-target="#navbarNav" aria-controls="navbarNav" 
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav" sec:authorize="isAuthenticated()">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/dashboard}">
+                            <i class="fas fa-home me-2"></i>Dashboard
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item" sec:authorize="!hasRole('DEAN')">
+                        <a class="nav-link" th:href="@{/paperwork/new}">
+                            <i class="fas fa-plus me-2"></i>New Paperwork
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                        <a class="nav-link" th:href="@{/admin/users}">
+                            <i class="fas fa-users-cog me-2"></i>Manage Users
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item" sec:authorize="hasAnyRole('DEAN', 'ADMIN')">
+                        <a class="nav-link" th:href="@{/audit-log}">
+                            <i class="fas fa-history me-2"></i>Audit Log
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#helpModal">
+                            <i class="fas fa-question-circle me-2"></i>Help
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#aboutModal">
+                            <i class="fas fa-info-circle me-2"></i>About
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item dropdown ms-3">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" 
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-2"></i>
+                            <span sec:authentication="name"></span>
+                            <span class="badge bg-primary ms-2" sec:authentication="principal.authorities"></span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                            <li>
+                                <a class="dropdown-item" href="#" data-bs-toggle="modal" 
+                                   data-bs-target="#settingsModal">
+                                    <i class="fas fa-cog me-2"></i>Settings
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form th:action="@{/logout}" method="post">
+                                    <button class="dropdown-item text-danger">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="content" layout:fragment="content">
+        <!-- Page content will be inserted here -->
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-4 bg-white border-top mt-auto">
+        <div class="container text-center">
+            <p class="text-muted mb-0">© 2024 SOC Paperwork Management System</p>
+        </div>
+    </footer>
+
+    <!-- Modal Templates -->
+    <div th:replace="~{fragments/modals/settings :: modal}"></div>
+    <div th:replace="~{fragments/modals/help :: modal}"></div>
+    <div th:replace="~{fragments/modals/about :: modal}"></div>
+    <div th:replace="~{fragments/modals/notification :: modal}"></div>
+
+    <!-- Local JavaScript -->
+    <script th:src="@{/static/js/theme.js}" defer></script>
+    <script th:src="@{/static/js/notifications.js}" defer></script>
+    
+    <script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        // Theme initialization
+        const initTheme = () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            applyTheme(savedTheme);
+            document.body.classList.add('theme-loaded');
+            
+            // Update theme selector if exists
+            const themeSelect = document.getElementById('themeSelect');
+            if (themeSelect) {
+                themeSelect.value = savedTheme;
+            }
+        };
+
+        // Theme switching function
+        const applyTheme = (theme) => {
+            if (theme === 'system') {
+                const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+            } else {
+                document.documentElement.setAttribute('data-theme', theme);
+            }
+            localStorage.setItem('theme', theme);
+        };
+
+        // Initialize Bootstrap components
+        const initBootstrapComponents = () => {
+            // Tooltips
+            document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+                new bootstrap.Tooltip(el);
+            });
+
+            // Dropdowns
+            document.querySelectorAll('.dropdown-toggle').forEach(el => {
+                new bootstrap.Dropdown(el);
+            });
+
+            // Modals
+            document.querySelectorAll('.modal').forEach(el => {
+                new bootstrap.Modal(el);
+            });
+        };
+
+        // Settings form handler
+        const initSettingsForm = () => {
+            const form = document.getElementById('settingsForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const formData = new FormData(this);
+                    
+                    fetch('/api/settings/update', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            applyTheme(formData.get('theme'));
+                            document.body.classList.toggle('compact-view', formData.get('compactView') === 'on');
+                            
+                            // Show success notification
+                            showNotification({
+                                type: 'success',
+                                title: 'Settings Updated',
+                                message: 'Your preferences have been saved successfully'
+                            });
+                            
+                            // Close modal
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('settingsModal'));
+                            if (modal) {
+                                modal.hide();
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        showNotification({
+                            type: 'error',
+                            title: 'Error',
+                            message: 'Failed to update settings',
+                            details: error.message
+                        });
+                    });
+                });
+            }
+        };
+
+        // Initialize everything
+        initTheme();
+        initBootstrapComponents();
+        initSettingsForm();
+
+        // Handle system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            if (localStorage.getItem('theme') === 'system') {
+                applyTheme('system');
+            }
+        });
+    });
+    </script>
+
+    <!-- Page specific scripts -->
+    <th:block layout:fragment="scripts">
+        <!-- Will be replaced by page specific scripts -->
+    </th:block>
+
+    <!-- External JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

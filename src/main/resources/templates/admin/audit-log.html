@@ -1,0 +1,107 @@
+<!-- Create file: src/main/resources/templates/admin/audit-log.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Audit Log - SOC PMS</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container py-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-history text-primary me-2"></i>
+                        System Audit Log
+                    </h4>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="px-4 py-3">Time</th>
+                                    <th class="px-4 py-3">User</th>
+                                    <th class="px-4 py-3">Action</th>
+                                    <th class="px-4 py-3">Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="log : ${auditLogs}">
+                                    <td class="px-4" th:text="${#temporals.format(log.timestamp, 'dd MMM yyyy, HH:mm')}"></td>
+                                    <td class="px-4" th:text="${log.username}"></td>
+                                    <td class="px-4" th:text="${log.action}"></td>
+                                    <td class="px-4">
+                                        <button class="btn btn-sm btn-outline-primary"
+                                                data-bs-toggle="modal" 
+                                                th:data-bs-target="'#logModal_' + ${log.id}">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <nav th:if="${totalPages > 1}" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li th:class="${'page-item ' + (currentPage == 1 ? 'disabled' : '')}">
+                        <a class="page-link" th:href="@{/audit-log(page=${currentPage - 1})}">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    <li th:each="i : ${#numbers.sequence(1, totalPages)}" 
+                        th:class="${'page-item ' + (i == currentPage ? 'active' : '')}">
+                        <a class="page-link" th:href="@{/audit-log(page=${i})}" th:text="${i}"></a>
+                    </li>
+                    <li th:class="${'page-item ' + (currentPage == totalPages ? 'disabled' : '')}">
+                        <a class="page-link" th:href="@{/audit-log(page=${currentPage + 1})}">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Log Detail Modals -->
+            <div th:each="log : ${auditLogs}" th:id="'logModal_' + ${log.id}" class="modal fade">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 shadow">
+                        <div class="modal-header border-0">
+                            <h5 class="modal-title fw-bold">
+                                <i class="fas fa-info-circle text-primary me-2"></i>
+                                Log Details
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body py-4">
+                            <div class="row mb-3">
+                                <label class="col-sm-4 fw-medium">Timestamp:</label>
+                                <div class="col-sm-8" th:text="${#temporals.format(log.timestamp, 'dd MMM yyyy, HH:mm')}"></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-4 fw-medium">User:</label>
+                                <div class="col-sm-8" th:text="${log.username}"></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-4 fw-medium">Action:</label>
+                                <div class="col-sm-8" th:text="${log.action}"></div>
+                            </div>
+                            <div class="row">
+                                <label class="col-sm-4 fw-medium">Details:</label>
+                                <div class="col-sm-8" th:text="${log.details}"></div>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-0">
+                            <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

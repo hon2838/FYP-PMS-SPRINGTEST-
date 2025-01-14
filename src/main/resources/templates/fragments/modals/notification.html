@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="modal">
+        <!-- Notification Modal -->
+        <div class="modal fade" id="notificationModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow">
+                    <div id="notificationHeader" class="modal-header border-0">
+                        <h5 class="modal-title fw-bold">
+                            <i id="notificationIcon" class="fas me-2"></i>
+                            <span id="notificationTitle">Notification</span>
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body py-4 text-center">
+                        <div class="notification-animation mb-4">
+                            <i id="notificationMainIcon" style="font-size: 4rem;"></i>
+                        </div>
+                        <h5 class="mb-3" id="notificationMessage"></h5>
+                        <div class="text-muted mb-0" id="notificationDetails"></div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn px-4" id="notificationButton" data-bs-dismiss="modal">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
